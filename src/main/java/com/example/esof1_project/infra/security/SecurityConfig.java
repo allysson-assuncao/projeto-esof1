@@ -1,5 +1,7 @@
 package com.example.esof1_project.infra.security;
 
+import com.example.esof1_project.exceptions.CustomAuthenticationEntryPoint;
+import com.example.esof1_project.model.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,15 +23,12 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class SecurityConfig {
 
     @Autowired
-    private CustomUserDetailsService userDetailsService;
-
-    @Autowired
-    SecurityFilterChain securityFilter;
+    SecurityFilter securityFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint, CorsConfigurationSource corsConfigurationSource) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .exceptionHandling(exception ->
                         exception
@@ -37,16 +37,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/app/auth/**").permitAll()
-                        .requestMatchers("/files/images/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/app/institution/**").permitAll()
-                        .requestMatchers("/app/files/**").authenticated()
-                        .requestMatchers("/app/profile/**").authenticated()
-                        .requestMatchers("/app/processes/**").hasRole("PROFESSOR")
-                        .requestMatchers("/api/answerSheet/**").hasRole("PROFESSOR")
-                        .requestMatchers("/api/classroom/**").hasRole("PROFESSOR")
-                        .requestMatchers(HttpMethod.GET, "/app/auth/test").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/app/institution/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/app/institution/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/app/product/**").hasRole(UserRole.CASHIER.getRole())
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
