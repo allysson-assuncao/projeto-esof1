@@ -1,10 +1,10 @@
-package com.example.projetoesof1;
+package com.example.esof1_project;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ProjetoEsof1ApplicationTests {
+class ApplicationTests {
 
     @Test
     void contextLoads() {
