@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/app/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/app/product/**").hasRole(UserRole.CASHIER.getRole())
+                        .requestMatchers(HttpMethod.PUT, "/app/product/**").hasRole(UserRole.CASHIER.name())
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
